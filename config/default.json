@@ -1,0 +1,7 @@
+{
+    "mongoURI":"mongodb+srv://Model1:abcd1234@cluster0.3d9fl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    "jwtToken":"The Secret was, We will be together",
+    "accessTokenSecret":"somerandomaccesstoken",
+    "refreshTokenSecret":"somerandomstringforrefreshtoken"
+
+}
