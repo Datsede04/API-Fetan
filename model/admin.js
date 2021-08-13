@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt-nodejs");
 const AdminSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -19,7 +19,7 @@ const AdminSchema = new mongoose.Schema({
   is_admin: {
     type: String,
     default: true,
-  }
+  },
 });
 
 AdminSchema.pre("save", function (next) {

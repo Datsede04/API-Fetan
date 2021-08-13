@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt-nodejs");
 const StationSchema = new mongoose.Schema({
   createdby: {
     type: String,
@@ -46,7 +46,6 @@ const StationSchema = new mongoose.Schema({
     type: String,
     default: false,
   },
- 
 });
 
 StationSchema.pre("save", function (next) {

@@ -5,7 +5,7 @@ const paymentRate = require("../model/paymentRate");
 const admin = require("../model/admin");
 const config = require("../config/config");
 const jwt = require("jwt-simple");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt-nodejs");
 
 // ************************************************
 // test route to /admin
