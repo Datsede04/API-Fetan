@@ -36,7 +36,7 @@ var upload = multer({ storage: storage });
 //***************************************************** */
 // Registoring customer //
 
-router.post("/register",isLoggedIn,async (req, res) => {
+router.post("/register", isLoggedIn, async (req, res) => {
   const { name, barcode, id, phone, customer_type } = req.body;
   try {
     let check = await customer.findOne({ barcode });
@@ -48,24 +48,15 @@ router.post("/register",isLoggedIn,async (req, res) => {
         .json({ msg: "The customer is already registered" });
     }
 
-    try{
-
-      console.log(phone)
-      if(phone.length == 10){
-         parseInt(phone)
-      }else{
-        
-      return res
-      .status(403)
-      .json({ msg: "phone number is invalid" });
-    
+    try {
+      console.log(phone);
+      if (phone.length == 10) {
+        parseInt(phone);
+      } else {
+        return res.status(403).json({ msg: "phone number is invalid" });
       }
-    }catch (err) {
-
-      return res
-      .status(403)
-      .json({ msg: "phone number is invalid" });
-    
+    } catch (err) {
+      return res.status(403).json({ msg: "phone number is invalid" });
     }
     let new_customer = new customer({
       name,
@@ -78,7 +69,9 @@ router.post("/register",isLoggedIn,async (req, res) => {
     new_customer.save(function (err, obj) {
       if (err) {
         console.log("err", err);
-        return res.status(401).json({ msg: "There was an error please check your inputs" });
+        return res
+          .status(401)
+          .json({ msg: "There was an error please check your inputs" });
       }
       res.status(200).json({ msg: "Successfully registered the Customer" });
     });
@@ -96,7 +89,6 @@ router.post("/detail_station", isLoggedIn, async (req, res) => {
   let filter = { station_Id: station_Id };
   let filterd = await station.find(filter);
   if (filterd[0]) {
-    
     result = filterd[0];
   } else {
     result = { msg: "No Data" };
@@ -104,7 +96,7 @@ router.post("/detail_station", isLoggedIn, async (req, res) => {
   res.status(200).json(result);
 });
 
-router.post("/start", isLoggedIn,async (req, res) => {
+router.post("/start", isLoggedIn, async (req, res) => {
   try {
     const { barcode, station_Id, issport } = req.body;
     var check = { barcode: barcode };
@@ -122,7 +114,9 @@ router.post("/start", isLoggedIn,async (req, res) => {
     // }
 
     if (user[0].current_using) {
-      return res.status(400).json({ msg: "The Customer is already using a bike" });
+      return res
+        .status(400)
+        .json({ msg: "The Customer is already using a bike" });
     }
 
     if (!(user[0].creadit == 0)) {
@@ -136,7 +130,7 @@ router.post("/start", isLoggedIn,async (req, res) => {
       return res.status(400).json({ msg: "No bick avilable" });
     }
 
-    if (issport=="true" && user[0].customer_type == "3") {
+    if (issport == "true" && user[0].customer_type == "3") {
       return res.status(400).json({ msg: "Not available for Guest" });
     }
 
@@ -169,7 +163,7 @@ router.post("/start", isLoggedIn,async (req, res) => {
 // // **********************************************************//
 // // Stop the timer
 
-router.post("/stop", isLoggedIn,async (req, res) => {
+router.post("/stop", isLoggedIn, async (req, res) => {
   try {
     const { barcode, station_Id } = req.body;
     var check = { barcode: barcode };
@@ -198,7 +192,7 @@ router.post("/stop", isLoggedIn,async (req, res) => {
     let timeused = (time - user[0].start_time) / 1000;
     let timeforcal = timeused % 60;
 
-    console.log("Time used",timeused);
+    console.log("Time used", timeused);
 
     if (timeforcal > 30) {
       timeused = parseInt(timeused / 60) + 1;
@@ -218,7 +212,7 @@ router.post("/stop", isLoggedIn,async (req, res) => {
         creadit = 2;
       } else {
         let rate = await paymentRate.find();
-        creadit = 2 + rate[0].Rate1 * (timeused-5);
+        creadit = 2 + rate[0].Rate1 * (timeused - 5);
       }
     } else if (user[0].customer_type == "2") {
       // for staff
@@ -230,7 +224,6 @@ router.post("/stop", isLoggedIn,async (req, res) => {
       creadit = 1 + rate[0].Rate3 * timeused;
     }
 
-   
     // let creadit = 0.5 * timeused + 1;
     let num_service = user[0].number_services_used + 1;
     let houre = user[0].Number_of_houres + timeused / 60;
@@ -241,7 +234,7 @@ router.post("/stop", isLoggedIn,async (req, res) => {
       issport: false,
       number_services_used: num_service,
       Number_of_houres: houre,
-      creadit
+      creadit,
     };
 
     const obj_station = {
@@ -255,7 +248,7 @@ router.post("/stop", isLoggedIn,async (req, res) => {
     });
 
     if (updated && updatestation) {
-      res.json({creadit:creadit,time:timeused});
+      res.json({ creadit: creadit, time: timeused });
     } else {
       console.log("error /stop");
     }
@@ -268,7 +261,7 @@ router.post("/stop", isLoggedIn,async (req, res) => {
 // ***************************************************
 // show it the current user was using the bick or not
 
-router.post("/was_it",isLoggedIn, async (req, res) => {
+router.post("/was_it", isLoggedIn, async (req, res) => {
   try {
     const { barcode, station_Id } = req.body;
 
@@ -277,14 +270,14 @@ router.post("/was_it",isLoggedIn, async (req, res) => {
 
     let user = await customer.find(check);
     let host = await station.find(check1);
-    if (!user [0]) {
+    if (!user[0]) {
       return res.status(400).json({ msg: "The Customer is not registered" });
     }
-    if (user [0].isBanned) {
+    if (user[0].isBanned) {
       return res.status(400).json({ msg: "The Customer is Banned" });
     }
     if (user && host) {
-      res.json({msg:`${user[0].current_using}`});
+      res.json({ msg: `${user[0].current_using}` });
     }
   } catch (err) {
     return res.status(400).json({ msg: "server error" });
@@ -294,7 +287,7 @@ router.post("/was_it",isLoggedIn, async (req, res) => {
 // *****************************************************
 // payment accepting
 
-router.post("/paid", isLoggedIn,async (req, res) => {
+router.post("/paid", isLoggedIn, async (req, res) => {
   try {
     const { barcode, ispaid, paidAmount, station_Id } = req.body;
     var check = { barcode: barcode };
@@ -338,7 +331,7 @@ router.post("/paid", isLoggedIn,async (req, res) => {
 // *************************************************************************************
 // get the amount of the creadit
 
-router.get("/creadit_left", isLoggedIn,async (req, res) => {
+router.get("/creadit_left", isLoggedIn, async (req, res) => {
   try {
     const { barcode, station_Id } = req.body;
     let check = { barcode: barcode };
@@ -365,7 +358,7 @@ router.get("/creadit_left", isLoggedIn,async (req, res) => {
 // *************************************************************************************
 // pay creadit
 
-router.post("/pay_creadit", isLoggedIn,async (req, res) => {
+router.post("/pay_creadit", isLoggedIn, async (req, res) => {
   try {
     const { barcode, paidAmount, station_Id } = req.body;
     let check = { barcode: barcode };
@@ -432,7 +425,7 @@ router.post("/who", async (req, res) => {
 
 // **************************************************************************
 //show all customer
-router.get("/all", isLoggedIn,async (req, res) => {
+router.get("/all", isLoggedIn, async (req, res) => {
   try {
     let found = await customer.find();
     if (found) {
@@ -445,34 +438,30 @@ router.get("/all", isLoggedIn,async (req, res) => {
   }
 });
 
-
-router.put("/ban", isLoggedIn,async (req, res) => {
+router.put("/ban", isLoggedIn, async (req, res) => {
   try {
     let obj = { isBanned: true };
     let filter = { id: req.body.id };
     let cheker = await customer.findOne(filter);
 
     if (cheker) {
-      await customer.findOneAndUpdate(
-        filter,obj,
-        function (err, doc) {
-          if (err) {
-            return res.status(500).json({ msg: "Banning Customer Failed" });
-          }
-          return res.status(200).json({ msg: "Customer has been Banned" });
+      await customer.findOneAndUpdate(filter, obj, function (err, doc) {
+        if (err) {
+          return res.status(500).json({ msg: "Banning Customer Failed" });
         }
-      );
+        return res.status(200).json({ msg: "Customer has been Banned" });
+      });
     } else {
       return res.status(500).json({ msg: "Banning Customer Failed" });
     }
   } catch (err) {
     res.status(500).send("Server Error" + err.message);
   }
-})
+});
 // **********************************************
 // unbanne a customer
 
-router.put("/unban", isLoggedIn,async (req, res) => {
+router.put("/unban", isLoggedIn, async (req, res) => {
   try {
     let obj = { isBanned: false };
     let filter = { id: req.body.id };
@@ -487,9 +476,13 @@ router.put("/unban", isLoggedIn,async (req, res) => {
         },
         function (err, doc) {
           if (err) {
-            return res.status(500).json({ msg: "Unbanning the Customer Failed" });
+            return res
+              .status(500)
+              .json({ msg: "Unbanning the Customer Failed" });
           }
-          return res.status(200).json({ msg: "The Customer has been Successfully Unbanned" });
+          return res
+            .status(200)
+            .json({ msg: "The Customer has been Successfully Unbanned" });
         }
       );
     } else {
@@ -512,6 +505,7 @@ router.post("/login_station", async (req, res) => {
   await station.findOne(
     {
       station_Id: req.body.station_Id,
+      is_active: true,
     },
     function (err, result) {
       if (err) throw err;
@@ -534,7 +528,7 @@ router.post("/login_station", async (req, res) => {
 // ************************************************
 // Logout route
 
-router.get("/logout_station", isLoggedIn,async (req, res) => {
+router.get("/logout_station", isLoggedIn, async (req, res) => {
   req.logout();
   res.json({ msg: "loged out" });
 });
