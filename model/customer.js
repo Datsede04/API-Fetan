@@ -13,6 +13,7 @@ const customerSchema = new mongoose.Schema({
   id: {
     type: String,
     required: true,
+    lowercase: true,
     unique: true,
   },
   barcode: {
@@ -58,4 +59,4 @@ const customerSchema = new mongoose.Schema({
   },
 });
 
-module.exports = customer = mongoose.model("customer", customerSchema)
+module.exports = customer = mongoose.model("customer", customerSchema);
