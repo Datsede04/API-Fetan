@@ -423,21 +423,6 @@ router.post("/who", async (req, res) => {
   }
 });
 
-// **************************************************************************
-//show all customer
-router.get("/all", isLoggedIn, async (req, res) => {
-  try {
-    let found = await customer.find();
-    if (found) {
-      res.status(200).json(found);
-    } else {
-      res.json({ msg: "no customer" });
-    }
-  } catch (err) {
-    return res.status(500).send("Error bro", err.message);
-  }
-});
-
 router.put("/ban", isLoggedIn, async (req, res) => {
   try {
     let obj = { isBanned: true };

@@ -400,6 +400,21 @@ router.put("/delete_station", isLoggedIn, async (req, res) => {
   }
 });
 
+// **************************************************************************
+//show all customer
+router.get("/all", isLoggedIn, async (req, res) => {
+  try {
+    let found = await customer.find({ current_using: true });
+    if (found) {
+      res.status(200).json(found);
+    } else {
+      res.json({ msg: "no customer" });
+    }
+  } catch (err) {
+    return res.status(500).send("Error bro", err.message);
+  }
+});
+
 // ************************************************
 // Logout route
 
