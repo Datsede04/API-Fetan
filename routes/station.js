@@ -426,7 +426,7 @@ router.post("/who", async (req, res) => {
 router.put("/ban", isLoggedIn, async (req, res) => {
   try {
     let obj = { isBanned: true };
-    let filter = { id: req.body.id };
+    let filter = { id: req.body.id, current_using: false };
     let cheker = await customer.findOne(filter);
 
     if (cheker) {
@@ -449,8 +449,8 @@ router.put("/ban", isLoggedIn, async (req, res) => {
 router.put("/unban", isLoggedIn, async (req, res) => {
   try {
     let obj = { isBanned: false };
-    let filter = { id: req.body.id };
-    let cheker = await customer.findOne({ id: req.body.id });
+    let filter = { id: req.body.id, current_using: false };
+    let cheker = await customer.findOne(filter);
 
     if (cheker) {
       await customer.findOneAndUpdate(
