@@ -405,7 +405,7 @@ router.put("/delete_station", isLoggedIn, async (req, res) => {
 router.get("/all", isLoggedIn, async (req, res) => {
   try {
     let found = await customer.find({ current_using: true });
-    if (found[0]) {
+    if (found) {
       res.status(200).json(found);
     } else {
       res.json({ msg: "no customer" });
