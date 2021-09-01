@@ -117,7 +117,9 @@ router.get("/active_stations", isLoggedIn, async (req, res) => {
 
 router.get("/Total_daily", async (req, res) => {
   let total = 0;
-  let filterd = await station.find().select({ daily_income: 1 });
+  let filterd = await station
+    .find({ is_active: true })
+    .select({ daily_income: 1 });
   filterd.forEach((val) => {
     total += val.daily_income;
   });
