@@ -361,6 +361,7 @@ router.get("/creadit_left", isLoggedIn, async (req, res) => {
 router.post("/pay_creadit", isLoggedIn, async (req, res) => {
   try {
     const { barcode, paidAmount, station_Id } = req.body;
+
     let check = { barcode: barcode };
     let check1 = { station_Id: station_Id };
     let user = await customer.find(check);
@@ -378,6 +379,12 @@ router.post("/pay_creadit", isLoggedIn, async (req, res) => {
       return res
         .status(400)
         .json({ error: [{ msg: "The user creadit is 0" }] });
+    }
+
+    if (parseFloat(paidAmount) < 0) {
+      return res
+        .status(400)
+        .json({ error: [{ msg: "Payment value is not valid" }] });
     }
 
     if (creadit_left < 0 || creadit_left == 0) {
