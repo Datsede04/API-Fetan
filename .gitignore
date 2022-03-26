@@ -1,6 +1,7 @@
 #
 config/default.json
 upload/
+Procfile
 # Logs
 logs
 *.log
